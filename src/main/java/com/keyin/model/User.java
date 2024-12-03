@@ -63,12 +63,11 @@ public class User {
     // Note: check if we need to diplays the info here with toString
     @Override
     public String toString() {
-        return "User{" +
-                "accountID=" + accountID +
-                ", email='" + email + '\'' +
-                ", username='" + username + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+        return "User Details:" +
+                "\n  Account ID: " + accountID +
+                "\n  Email: " + email +
+                "\n  Username: " + username +
+                "\n  Role: " + role;
     }
 
 //    // Added Validations to use before adding into the database
