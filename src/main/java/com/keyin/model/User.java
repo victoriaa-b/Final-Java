@@ -8,8 +8,13 @@ public class User {
     private String role; // buyer, seller and admin - to do later
 
     // Conctructors
-    public User() {}
 
+    // without accountID
+    public User(String username, String password, String email, String role) {
+        this(0, email, username, password, role);  // Use 0 or -1 as temporary ID
+    }
+
+    // with accountID
     public User(int accountID, String email, String username, String password, String role ){
         this.accountID = accountID;
         this.email = email;
