@@ -61,4 +61,21 @@ public class User {
     }
 
     // Note: check if we need to diplays the info here with toString
+    @Override
+    public String toString() {
+        return "User{" +
+                "accountID=" + accountID +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", role='" + role + '\'' +
+                '}';
+    }
+
+//    // Added Validations to use before adding into the database
+//    public boolean isValid() {
+//        return email != null && email.contains("@") &&
+//                username != null && !username.isEmpty() &&
+//                password != null && password.length() >= 6 &&  // Example: password must be at least 6 characters
+//                role != null && (role.equals("buyer") || role.equals("seller") || role.equals("admin"));
+//    }
 }
