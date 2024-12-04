@@ -1,6 +1,7 @@
 package com.keyin.model;
 
 import com.keyin.services.ProductService;
+import com.keyin.services.Product;
 
 import java.util.List;
 
@@ -23,20 +24,24 @@ public class Buyer extends User {
     // Simulate browsing products
     public void browseProducts() {
         System.out.println("Browsing all products:");
-        List<String> products = productService.getAllProducts();
-        for (String product : products) {
-            System.out.println(product);
+        List<Product> products = productService.getAllProducts();
+        if (products.isEmpty()) {
+            System.out.println("No products available.");
+        } else {
+            for (Product product : products) {
+                System.out.println(product);
+            }
         }
     }
 
     // Simulate searching for a product
     public void searchProduct(String productName) {
         System.out.println("Searching for products matching: " + productName);
-        List<String> matchingProducts = productService.searchProductsByName(productName);
+        List<Product> matchingProducts = productService.searchProductsByName(productName);
         if (matchingProducts.isEmpty()) {
             System.out.println("No products found matching: " + productName);
         } else {
-            for (String product : matchingProducts) {
+            for (Product product : matchingProducts) {
                 System.out.println(product);
             }
         }
@@ -45,7 +50,7 @@ public class Buyer extends User {
     // Simulate viewing product details
     public void viewProductDetails(int productId) {
         System.out.println("Fetching details for product ID: " + productId);
-        String productDetails = productService.getProductDetails(productId);
+        Product productDetails = productService.getProductDetails(productId);
         if (productDetails == null) {
             System.out.println("Product not found for ID: " + productId);
         } else {

@@ -1,32 +1,56 @@
-// File added for testing only.
-// It will change when the database will connect to it
-
 package com.keyin.services;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductService {
-    // Simulating a product database with a list
-    private List<String> products = new ArrayList<>();
+    private static int productCounter = 1; // Auto-increment for product IDs
+    private List<Product> products = new ArrayList<>();
 
     public ProductService() {
-        // Add some dummy data for testing
-        products.add("1: Laptop - $1000");
-        products.add("2: Smartphone - $700");
-        products.add("3: Headphones - $200");
+        // Dummy data for testing
+        addProduct("Laptop", 1000.0, 10, 1); // Seller ID 1
+        addProduct("Smartphone", 700.0, 15, 1); // Seller ID 1
+        addProduct("Headphones", 200.0, 5, 2); // Seller ID 2
+    }
+
+    // Add a new product
+    public void addProduct(String name, double price, int quantity, int sellerID) {
+        Product product = new Product(productCounter++, name, price, quantity, sellerID);
+        products.add(product);
+        System.out.println("Product added: " + product);
+    }
+
+    // Update a product by ID
+    public void updateProduct(int productID, String name, double price, int quantity) {
+        for (Product product : products) {
+            if (product.getProductID() == productID) {
+                product.setName(name);
+                product.setPrice(price);
+                product.setQuantity(quantity);
+                System.out.println("Product updated: " + product);
+                return;
+            }
+        }
+        System.out.println("Product not found with ID: " + productID);
+    }
+
+    // Delete a product by ID
+    public void deleteProduct(int productID) {
+        products.removeIf(product -> product.getProductID() == productID);
+        System.out.println("Product with ID " + productID + " has been deleted.");
     }
 
     // Fetch all products
-    public List<String> getAllProducts() {
+    public List<Product> getAllProducts() {
         return products;
     }
 
     // Search products by name
-    public List<String> searchProductsByName(String keyword) {
-        List<String> matchingProducts = new ArrayList<>();
-        for (String product : products) {
-            if (product.toLowerCase().contains(keyword.toLowerCase())) {
+    public List<Product> searchProductsByName(String keyword) {
+        List<Product> matchingProducts = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getName().toLowerCase().contains(keyword.toLowerCase())) {
                 matchingProducts.add(product);
             }
         }
@@ -34,16 +58,23 @@ public class ProductService {
     }
 
     // Fetch product details by ID
-    public String getProductDetails(int productId) {
-        for (String product : products) {
-            if (product.startsWith(productId + ":")) {
+    public Product getProductDetails(int productID) {
+        for (Product product : products) {
+            if (product.getProductID() == productID) {
                 return product;
             }
         }
         return null; // Product not found
     }
+
+    // Fetch all products by a seller
+    public List<Product> getProductsBySeller(int sellerID) {
+        List<Product> sellerProducts = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getSellerID() == sellerID) {
+                sellerProducts.add(product);
+            }
+        }
+        return sellerProducts;
+    }
 }
-
-// File added for testing only.
-// It will change when the database will connect to it
-
