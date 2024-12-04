@@ -1,15 +1,75 @@
 package com.keyin.model;
 
+import com.keyin.services.ProductService;
+import com.keyin.services.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Admin extends User {
 
-    // admin objects user that comes from the db
-    public Admin(int accountID, String username, String password, String email, String role) {
-        super(accountID, email, username, password, role); // call parent class
+    private final List<User> userList; // Simulated user database
+    private final ProductService productService; // Product management
+
+    // Constructor with accountID
+    public Admin(int accountID, String username, String password, String email) {
+        super(accountID, email, username, password, "ADMIN");
+        this.userList = new ArrayList<>();
+        this.productService = new ProductService(); // Initialize ProductService
     }
 
-    // create new admin user without the accountID
+    // Constructor without accountID
     public Admin(String username, String password, String email) {
-        super(0, email, username, password, "ADMIN"); // Use 0 or -1 as temporary ID
+        super(0, email, username, password, "ADMIN");
+        this.userList = new ArrayList<>();
+        this.productService = new ProductService(); // Initialize ProductService
     }
-    // will need to view all users, delete them and view all of the products
+
+    // Add user to the system (for testing purposes)
+    public void addUser(User user) {
+        userList.add(user);
+    }
+
+    // View all users with contact information
+    public void viewAllUsers() {
+        System.out.println("List of all users:");
+        if (userList.isEmpty()) {
+            System.out.println("No users available.");
+        } else {
+            for (User user : userList) {
+                System.out.println("ID: " + user.getAccountID() + ", Username: " + user.getUsername() +
+                        ", Email: " + user.getEmail() + ", Role: " + user.getRole());
+            }
+        }
+    }
+
+    // Delete user by ID
+    public void deleteUser(int userId) {
+        User userToRemove = null;
+        for (User user : userList) {
+            if (user.getAccountID() == userId) {
+                userToRemove = user;
+                break;
+            }
+        }
+        if (userToRemove != null) {
+            userList.remove(userToRemove);
+            System.out.println("User with ID " + userId + " has been removed.");
+        } else {
+            System.out.println("User with ID " + userId + " not found.");
+        }
+    }
+
+    // View all products with seller details
+    public void viewAllProducts() {
+        System.out.println("List of all products:");
+        List<Product> products = productService.getAllProducts();
+        if (products.isEmpty()) {
+            System.out.println("No products available.");
+        } else {
+            for (Product product : products) {
+                System.out.println(product);
+            }
+        }
+    }
 }

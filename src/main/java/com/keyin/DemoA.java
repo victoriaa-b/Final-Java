@@ -2,6 +2,7 @@ package com.keyin;
 
 import com.keyin.model.Buyer;
 import com.keyin.model.Seller;
+import com.keyin.model.Admin;
 
 public class DemoA {
     public static void main(String[] args) {
@@ -24,34 +25,58 @@ public class DemoA {
 //        System.out.println("\nBuyer viewing product details for ID 99:");
 //        buyer.viewProductDetails(99);
 
-        //Create a seller instance
-        Seller seller = new Seller(1, "tech_seller", "password123", "seller@example.com", "SELLER");
+//        //Create a seller instance
+//        Seller seller = new Seller(1, "tech_seller", "password123", "seller@example.com", "SELLER");
+//
+//        // Add new products
+//        System.out.println("Adding products...");
+//        seller.addProduct("Gaming Laptop", 1500.0, 5);
+//        seller.addProduct("Wireless Mouse", 50.0, 20);
+//        seller.addProduct("Mechanical Keyboard", 120.0, 10);
+//
+//        // View products listed by this seller
+//        System.out.println("\nViewing my products:");
+//        seller.viewMyProducts();
+//
+//        // Update a product
+//        System.out.println("\nUpdating product with ID 1...");
+//        seller.updateProduct(1, "High-End Gaming Laptop", 1600.0, 4);
+//
+//        // View updated products
+//        System.out.println("\nViewing my products after update:");
+//        seller.viewMyProducts();
+//
+//        // Delete a product
+//        System.out.println("\nDeleting product with ID 2...");
+//        seller.deleteProduct(2);
+//
+//        // View products after deletion
+//        System.out.println("\nViewing my products after deletion:");
+//        seller.viewMyProducts();
 
-        // Add new products
-        System.out.println("Adding products...");
-        seller.addProduct("Gaming Laptop", 1500.0, 5);
-        seller.addProduct("Wireless Mouse", 50.0, 20);
-        seller.addProduct("Mechanical Keyboard", 120.0, 10);
+        // Create an Admin instance
+        Admin admin = new Admin(1, "admin", "adminpass", "admin@example.com");
 
-        // View products listed by this seller
-        System.out.println("\nViewing my products:");
-        seller.viewMyProducts();
+        // Add some users to simulate a database
+        admin.addUser(new Buyer(2, "buyer1", "password1", "buyer1@example.com"));
+        admin.addUser(new Seller(3, "seller1", "password2", "seller1@example.com", "SELLER"));
+        admin.addUser(new Buyer(4, "buyer2", "password3", "buyer2@example.com"));
 
-        // Update a product
-        System.out.println("\nUpdating product with ID 1...");
-        seller.updateProduct(1, "High-End Gaming Laptop", 1600.0, 4);
+        // View all users
+        System.out.println("\nAdmin viewing all users:");
+        admin.viewAllUsers();
 
-        // View updated products
-        System.out.println("\nViewing my products after update:");
-        seller.viewMyProducts();
+        // Delete a user
+        System.out.println("\nAdmin deleting user with ID 3:");
+        admin.deleteUser(3);
 
-        // Delete a product
-        System.out.println("\nDeleting product with ID 2...");
-        seller.deleteProduct(2);
+        // View all users again
+        System.out.println("\nAdmin viewing all users after deletion:");
+        admin.viewAllUsers();
 
-        // View products after deletion
-        System.out.println("\nViewing my products after deletion:");
-        seller.viewMyProducts();
+        // View all products
+        System.out.println("\nAdmin viewing all products:");
+        admin.viewAllProducts();
     }
 }
 
