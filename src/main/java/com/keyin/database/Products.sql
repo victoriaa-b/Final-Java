@@ -5,3 +5,4 @@ CREATE TABLE Products (
     price DECIMAL(10, 2) NOT NULL,
     quantity INT DEFAULT 0
 );
+
