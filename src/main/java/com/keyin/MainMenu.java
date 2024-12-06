@@ -2,6 +2,7 @@ package com.keyin;
 
 import com.keyin.services.UserService;
 import java.util.Scanner;
+import com.keyin.model.User;
 
 // handles all the logic
 public class MainMenu {
@@ -54,7 +55,7 @@ public class MainMenu {
         System.out.println("Please Enter an password:");
         String password = scanner.nextLine();
 
-        System.out.println("Enter email your email:");
+        System.out.println("Please Enter email your email:");
         String email = scanner.nextLine();
 
         System.out.println("Enter one of these roles (Buyer, Seller, Admin):");
@@ -68,7 +69,72 @@ public class MainMenu {
         }
     }
 
+    // Logic for user login
+    private void login() {
+        System.out.println("Enter username:");
+        String username = scanner.nextLine();
+
+        System.out.println("Enter password:");
+        String password = scanner.nextLine();
+
+        try {
+            User user = userService.login(username, password);
+            System.out.println("Login was successful! Greetings, " + user.getUsername());
+
+           // every role gets their own menu
+            getRoleMenu(user);
+        } catch (Exception error) {
+            System.out.println("Login failed: " + error.getMessage());
+        }
     }
+
+    // logic  to show the user menu
+    private void getRoleMenu(User user) {
+        switch (user.getRole().toUpperCase()) {
+            case "BUYER":
+                showBuyerMenu();
+                break;
+            case "SELLER":
+                showSellerMenu();
+                break;
+            case "ADMIN":
+                showAdminMenu();
+                break;
+            default:
+                System.out.println("The role option failed to load");
+        }
+    }
+
+    // buyer menu
+    private void showBuyerMenu() {
+        System.out.println("Greetings, Buyer!");
+        // browse and view products
+        // search for certain products
+        // see products info
+    }
+
+    // seller menu
+    private void showSellerMenu() {
+        System.out.println("Greetings, Seller!");
+        // add products
+        // update products
+        // delete products
+        // view list of all of their products that are listed
+
+    }
+
+    // admin menu
+    private void showAdminMenu() {
+        System.out.println("Greetings, Admin!");
+        // display all users - contact info
+        // delete a user from the system
+        // see list of products in the systems
+        // list need to include seller name and info
+
+    }
+}
+
+
 
 
 
