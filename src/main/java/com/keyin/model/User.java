@@ -7,7 +7,7 @@ public class User {
     private String password;  // notes for later use BCrypt Maven
     private String role; // buyer, seller and admin - to do later
 
-    // Conctructors
+    // Constructors
 
     // without accountID
     public User(String username, String password, String email, String role) {
@@ -60,7 +60,7 @@ public class User {
         this.role = role;
     }
 
-    // Note: check if we need to diplays the info here with toString
+    // Note: check if we need to displays the info here with toString
     @Override
     public String toString() {
         return "User Details:" +
@@ -70,7 +70,7 @@ public class User {
                 "\n  Role: " + role;
     }
 
-//    // Added Validations to use before adding into the database
+//     Added Validations to use before adding into the database
 //    public boolean isValid() {
 //        return email != null && email.contains("@") &&
 //                username != null && !username.isEmpty() &&

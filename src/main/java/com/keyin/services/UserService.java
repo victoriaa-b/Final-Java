@@ -43,11 +43,15 @@ public class UserService {
         users.put(username, newUser);
     }
 
-    // Login method to authenticate a user
-    public User login(String username, String password) throws Exception {
-        User user = users.get(username);
-        if (user == null || !user.getPassword().equals(password)) {
-            throw new Exception("Invalid credentials");
+public User login(String username, String password) {
+        User user = userDAO.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        // validate the password
+        if (!BCrypt.checkpw(password, user.getPassword())) {
+            throw new RuntimeException("Invalid password"); 
         }
 
         // Sets up the current user
