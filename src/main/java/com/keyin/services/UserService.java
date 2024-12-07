@@ -1,55 +1,63 @@
 package com.keyin.services;
 
-import org.mindrot.jbcrypt.BCrypt;
-import com.keyin.DAO.UserDAO;
 import com.keyin.model.User;
-import com.keyin.model.Admin;
-import com.keyin.model.Seller;
 import com.keyin.model.Buyer;
+import com.keyin.model.Seller;
+import com.keyin.model.Admin;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserService {
-    private final UserDAO userDAO;
+    private final Map<String, User> users; // A map to store users by username
+    private User currentUser; // This will store the current logged-in user
 
+    // Constructor
     public UserService() {
-        this.userDAO = new UserDAO();
+        users = new HashMap<>();
+        // Here you can add some sample users for testing purposes
+        // users.put("admin", new Admin(1, "admin", "password", "admin@example.com"));
     }
 
-    public void registerUser(String username, String password, String email, String role) {
+    // Register a new user
+    public void registerUser(String username, String password, String email, String role) throws Exception {
+        if (users.containsKey(username)) {
+            throw new Exception("Username already taken");
+        }
 
-        // hash password
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
-        // decide user type by role selected
-        User user;
+        User newUser;
         switch (role.toUpperCase()) {
             case "BUYER":
-                user = new Buyer(username, hashedPassword, email);
+                newUser = new Buyer(username, password, email);
                 break;
             case "SELLER":
-                user = new Seller(username, hashedPassword, email);
+                newUser = new Seller(username, password, email);
                 break;
             case "ADMIN":
-                user = new Admin(username, hashedPassword, email);
+                newUser = new Admin(username, password, email);
                 break;
             default:
-                throw new RuntimeException("Invalid role: " + role);
+                throw new Exception("Invalid role");
         }
 
-        userDAO.createUser(user); // will create a user object
+        users.put(username, newUser);
     }
 
-    //  check to see if login with username is vaild
-    public User login(String username, String password) {
-        User user = userDAO.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
+    // Login method to authenticate a user
+    public User login(String username, String password) throws Exception {
+        User user = users.get(username);
+        if (user == null || !user.getPassword().equals(password)) {
+            throw new Exception("Invalid credentials");
         }
 
-        // vailate the password
-        if (!BCrypt.checkpw(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
-
+        // Sets up the current user
+        this.currentUser = user;
         return user;
     }
+
+    // need to get the current user info
+    public User getCurrentUser() {
+        return this.currentUser;
+    }
+
 }

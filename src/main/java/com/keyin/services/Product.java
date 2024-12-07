@@ -1,19 +1,24 @@
 package com.keyin.services;
 
+import com.keyin.model.Seller;
 public class Product {
-    private int productID;
+    private final int productID;
     private String name;
     private double price;
     private int quantity;
-    private int sellerID;
+    private final int sellerID;
+    private final String description;
+    private final Seller seller;
 
     // Constructor
-    public Product(int productID, String name, double price, int quantity, int sellerID) {
+    public Product(int productID, String name, double price, int quantity, int sellerID, String description, Seller seller) {
         this.productID = productID;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.sellerID = sellerID;
+        this.description = description;
+        this.seller = seller;
     }
 
     // Getters and Setters
@@ -21,6 +26,9 @@ public class Product {
         return productID;
     }
 
+    public String getDescription() {
+        return description;
+    }
     public String getName() {
         return name;
     }
@@ -45,18 +53,19 @@ public class Product {
         this.quantity = quantity;
     }
 
+    // Added seller info
     public int getSellerID() {
         return sellerID;
+    }
+    public Seller getSeller() {
+        return seller;
     }
 
     @Override
     public String toString() {
-        return "Product Details: " +
-                "ID=" + productID +
-                ", Name='" + name + '\'' +
-                ", Price=" + price +
-                ", Quantity=" + quantity +
-                ", SellerID=" + sellerID;
+        return "Product ID: " + productID + ", Name: " + name + ", Price: $" + price +
+                ", Quantity: " + quantity + ", Seller: " + seller.getUsername() +
+                " (ID: " + seller.getSellerID() + "), Seller Email: " + seller.getEmail();
     }
 }
 

@@ -2,25 +2,29 @@ package com.keyin.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.keyin.model.Seller;
 
 public class ProductService {
     private static int productCounter = 1; // Auto-increment for product IDs
     private List<Product> products = new ArrayList<>();
 
-    public ProductService() {
-        // Dummy data for testing
-        addProduct("Laptop", 1000.0, 10, 1); // Seller ID 1
-        addProduct("Smartphone", 700.0, 15, 1); // Seller ID 1
-        addProduct("Headphones", 200.0, 5, 2); // Seller ID 2
-    }
+    // CHECK THIS
+//    public ProductService() {
+//        // Dummy data for testing
+//        addProduct("Laptop", 1000.0, 10, 1); // Seller ID 1
+//        addProduct("Smartphone", 700.0, 15, 1); // Seller ID 1
+//        addProduct("Headphones", 200.0, 5, 2); // Seller ID 2
+//    }
 
     // Add a new product
-    public void addProduct(String name, double price, int quantity, int sellerID) {
-        Product product = new Product(productCounter++, name, price, quantity, sellerID);
+    public void addProduct(String name, double price, int quantity, String description, Seller seller)
+ {
+        Product product = new Product(productCounter++, name, price, quantity, seller.getSellerID(), description, seller);
         products.add(product);
         System.out.println("Product added: " + product);
     }
 
+    // CHECK
     // Update a product by ID
     public void updateProduct(int productID, String name, double price, int quantity) {
         for (Product product : products) {
@@ -57,14 +61,25 @@ public class ProductService {
         return matchingProducts;
     }
 
-    // Fetch product details by ID
-    public Product getProductDetails(int productID) {
+    // ProductID in string type
+    public Product getProductDetails(String productID) {
         for (Product product : products) {
-            if (product.getProductID() == productID) {
+            // Convert int productID to String for comparison
+            if (String.valueOf(product.getProductID()).equals(productID)) {
                 return product;
             }
         }
-        return null; // Product not found
+        return null;
+    }
+
+    // ProductID in int
+    public Product getProductDetails(int productID) {
+        for (Product product : products) {
+            if (product.getProductID() == productID) {  // Compare by int
+                return product;
+            }
+        }
+        return null;
     }
 
     // Fetch all products by a seller

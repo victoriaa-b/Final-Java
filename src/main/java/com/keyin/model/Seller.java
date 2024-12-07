@@ -6,8 +6,8 @@ import com.keyin.services.Product;
 import java.util.List;
 
 public class Seller extends User {
-    private int sellerID;
-    private ProductService productService;
+    private final  int sellerID;
+    private final ProductService productService;
 
     // Constructor for existing seller with accountID
     public Seller(int accountID, String username, String password, String email, String role) {
@@ -23,9 +23,14 @@ public class Seller extends User {
         this.productService = new ProductService();
     }
 
+    public int getSellerID() {
+        return sellerID;
+    }
+    // CHECK
     // Add a new product
-    public void addProduct(String name, double price, int quantity) {
-        productService.addProduct(name, price, quantity, this.sellerID);
+    public void addProduct(String name, double price, int quantity, String description) {
+        // Pass description and seller to the ProductService
+        productService.addProduct(name, price, quantity, description, this);
     }
 
     // Update an existing product

@@ -1,11 +1,13 @@
 package com.keyin;
 
 import com.keyin.services.UserService;
-//make main entry point
+import com.keyin.services.ProductService;
+// This is the main entry point
 public class App {
     public static void main(String[] args){
         UserService userService = new UserService();
-        MainMenu mainMenu = new MainMenu(userService);
+        ProductService productService = new ProductService();
+        MainMenu mainMenu = new MainMenu(userService, productService);
         mainMenu.show();
     }
 }
