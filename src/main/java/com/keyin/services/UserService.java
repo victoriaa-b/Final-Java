@@ -38,14 +38,14 @@ public class UserService {
         userDAO.createUser(user); // will create a user object
     }
 
-    //  check to see if login with username is vaild
+    //  check to see if login with username is valid
     public User login(String username, String password) {
         User user = userDAO.findByUsername(username);
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-        // vailate the password
+        // validate the password
         if (!BCrypt.checkpw(password, user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
