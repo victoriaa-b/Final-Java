@@ -1,12 +1,12 @@
 package com.keyin.model;
 
 import com.keyin.services.ProductService;
-import com.keyin.services.Product;
+import com.keyin.model.Product;
 
 import java.util.List;
 
 public class Seller extends User {
-    private final  int sellerID;
+    private final int sellerID;
     private final ProductService productService;
 
     // Constructor for existing seller with accountID
@@ -26,26 +26,25 @@ public class Seller extends User {
     public int getSellerID() {
         return sellerID;
     }
-    // CHECK
+
     // Add a new product
     public void addProduct(String name, double price, int quantity, String description) {
-        // Pass description and seller to the ProductService
-        productService.addProduct(name, price, quantity, description, this);
+        productService.addProduct(name, price, quantity, description, this); // Save to the database
     }
 
     // Update an existing product
     public void updateProduct(int productID, String name, double price, int quantity) {
-        productService.updateProduct(productID, name, price, quantity);
+        productService.updateProduct(productID, name, price, quantity); // Update the database
     }
 
     // Delete a product
     public void deleteProduct(int productID) {
-        productService.deleteProduct(productID);
+        productService.deleteProduct(productID); // Delete from the database
     }
 
     // View all products listed by this seller
     public void viewMyProducts() {
-        List<Product> sellerProducts = productService.getProductsBySeller(this.sellerID);
+        List<Product> sellerProducts = productService.getProductsBySeller(this.sellerID); // Fetch from the database
         if (sellerProducts.isEmpty()) {
             System.out.println("You have no products listed.");
         } else {

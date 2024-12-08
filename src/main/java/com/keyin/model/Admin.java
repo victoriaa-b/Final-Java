@@ -1,7 +1,6 @@
 package com.keyin.model;
 
 import com.keyin.services.ProductService;
-import com.keyin.services.Product;
 
 
 import java.util.ArrayList;

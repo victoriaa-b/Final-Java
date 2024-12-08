@@ -4,27 +4,25 @@ import com.keyin.model.User;
 import com.keyin.model.Buyer;
 import com.keyin.model.Seller;
 import com.keyin.model.Admin;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.keyin.DAO.UserDAO; // Import your UserDAO
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
-    private final Map<String, User> users; // A map to store users by username
-    private User currentUser; // This will store the current logged-in user
+    private final UserDAO userDAO; // To interact with the database
+    private User currentUser; // To store the current logged-in user
 
     // Constructor
     public UserService() {
-        users = new HashMap<>();
-        // Here you can add some sample users for testing purposes
-        // users.put("admin", new Admin(1, "admin", "password", "admin@example.com"));
+        userDAO = new UserDAO(); // Initialize the UserDAO
     }
 
-    // Register a new user
+    // Register a new user (optional, if using in-memory map for testing)
     public void registerUser(String username, String password, String email, String role) throws Exception {
-        if (users.containsKey(username)) {
+        if (userDAO.findByUsername(username) != null) {
             throw new Exception("Username already taken");
         }
 
+        // Create a new user depending on the role
         User newUser;
         switch (role.toUpperCase()) {
             case "BUYER":
@@ -40,28 +38,29 @@ public class UserService {
                 throw new Exception("Invalid role");
         }
 
-        users.put(username, newUser);
+        // Save user to the database
+        userDAO.createUser(newUser); // Ensure this method is implemented in UserDAO
     }
 
-public User login(String username, String password) {
-        User user = userDAO.findByUsername(username);
+    // Login method (using UserDAO to check the database)
+    public User login(String username, String password) {
+        User user = userDAO.findByUsername(username); // Fetch the user from the database
         if (user == null) {
             throw new RuntimeException("User not found");
         }
 
-        // validate the password
+        // Validate the password
         if (!BCrypt.checkpw(password, user.getPassword())) {
-            throw new RuntimeException("Invalid password"); 
+            throw new RuntimeException("Invalid password");
         }
 
-        // Sets up the current user
+        // Set up the current logged-in user
         this.currentUser = user;
         return user;
     }
 
-    // need to get the current user info
+    // Get the current logged-in user
     public User getCurrentUser() {
         return this.currentUser;
     }
-
 }
