@@ -62,6 +62,6 @@ public class UserService {
     // Get the current logged-in user
     public User getCurrentUser() {
         return this.currentUser;
-    }
+    }}
 
 
