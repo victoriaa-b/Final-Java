@@ -1,13 +1,14 @@
 package com.keyin;
 
 import com.keyin.services.UserService;
-import java.util.Scanner;
-import com.keyin.model.User;
 import com.keyin.services.ProductService;
+import com.keyin.model.User;
+import com.keyin.model.Buyer;
 import com.keyin.model.Seller;
-import com.keyin.services.Product;
-import java.util.List;
 import com.keyin.model.Admin;
+import com.keyin.model.Product;
+import java.util.List;
+import java.util.Scanner;
 
 // handles all the logic
 public class MainMenu {
@@ -15,14 +16,13 @@ public class MainMenu {
     private final ProductService productService;
     private final Scanner scanner;
 
-    // need to initialize
     public MainMenu(UserService userService, ProductService productService) {
         this.userService = userService;
         this.productService = productService;
         this.scanner = new Scanner(System.in);
     }
 
-    // display the menu
+    // display the main menu
     public void show() {
         boolean running = true;
         while (running) {
@@ -31,16 +31,14 @@ public class MainMenu {
             System.out.println("2. Login");
             System.out.println("3. Exit");
 
-            int option = scanner.nextInt(); // takes the user options
-            scanner.nextLine();
+            int option = scanner.nextInt();
+            scanner.nextLine();  // Consume newline
 
             switch (option) {
                 case 1:
-                    // they will register here
                     register();
                     break;
                 case 2:
-                    // they will need to login here
                     login();
                     break;
                 case 3:
@@ -53,15 +51,15 @@ public class MainMenu {
         }
     }
 
-    // Logic for User to Register an account
+    // Logic for User Registration
     private void register() {
-        System.out.println("Please Enter an username:");
+        System.out.println("Please Enter a username:");
         String username = scanner.nextLine();
 
-        System.out.println("Please Enter an password:");
+        System.out.println("Please Enter a password:");
         String password = scanner.nextLine();
 
-        System.out.println("Please Enter email your email:");
+        System.out.println("Please Enter your email:");
         String email = scanner.nextLine();
 
         System.out.println("Enter one of these roles (Buyer, Seller, Admin):");
@@ -69,13 +67,13 @@ public class MainMenu {
 
         try {
             userService.registerUser(username, password, email, role);  // Call UserService method
-            System.out.println("Registration successful!"); // registration worked
+            System.out.println("Registration successful!");
         } catch (Exception error) {
-            System.out.println("Registration failed: " + error.getMessage());  // error occurred
+            System.out.println("Registration failed: " + error.getMessage());
         }
     }
 
-    // Logic for user login
+    // Logic for User Login
     private void login() {
         System.out.println("Enter username:");
         String username = scanner.nextLine();
@@ -85,15 +83,16 @@ public class MainMenu {
 
         try {
             User user = userService.login(username, password);
-            System.out.println("Login was successful! Greetings, " + user.getUsername());
+            System.out.println("Login successful! Greetings, " + user.getUsername());
 
-            // every role gets their own menu
+            // Role-based menu
             getRoleMenu(user);
         } catch (Exception error) {
             System.out.println("Login failed: " + error.getMessage());
         }
     }
 
+    // Display menu based on user role
     // logic  to show the user menu
     private void getRoleMenu(User user) {
         switch (user.getRole().toUpperCase()) {
@@ -144,7 +143,7 @@ public class MainMenu {
                     // Buyer can search for a product by its ID
                     System.out.println("Enter the product ID to search:");
                     String searchId = scanner.nextLine();
-                    Product searchedProduct = productService.getProductDetails(searchId);
+                    Product searchedProduct = productService.getProductDetails(Integer.parseInt(searchId));
                     if (searchedProduct != null) {
                         System.out.println("Product Found: " + searchedProduct.getName());
                     } else {
@@ -156,7 +155,7 @@ public class MainMenu {
                     // Buyer can view product details by using the ID
                     System.out.println("Enter the product ID to view details:");
                     String infoId = scanner.nextLine();
-                    Product productDetails = productService.getProductDetails(infoId);
+                    Product productDetails = productService.getProductDetails(Integer.parseInt(infoId));
                     if (productDetails != null) {
                         System.out.println("Product Name: " + productDetails.getName());
                         System.out.println("Price: $" + productDetails.getPrice());
