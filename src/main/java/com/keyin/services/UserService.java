@@ -4,47 +4,47 @@ import com.keyin.model.User;
 import com.keyin.model.Buyer;
 import com.keyin.model.Seller;
 import com.keyin.model.Admin;
-import com.keyin.DAO.UserDAO; // Import your UserDAO
+import com.keyin.DAO.UserDAO;
 import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
-    private final UserDAO userDAO; // To interact with the database
-    private User currentUser; // To store the current logged-in user
+    private final UserDAO userDAO;
+    private User currentUser;
 
-    // Constructor
     public UserService() {
-        userDAO = new UserDAO(); // Initialize the UserDAO
+        this.userDAO = new UserDAO();
     }
 
-    // Register a new user (optional, if using in-memory map for testing)
-    public void registerUser(String username, String password, String email, String role) throws Exception {
+    public void registerUser(String username, String password, String email, String role) {
         if (userDAO.findByUsername(username) != null) {
-            throw new Exception("Username already taken");
+            throw new RuntimeException("Username already taken");
         }
 
-        // Create a new user depending on the role
+        // Normalize the role to lowercase before saving
+        role = role.toLowerCase();
+
         User newUser;
-        switch (role.toUpperCase()) {
-            case "BUYER":
-                newUser = new Buyer(username, password, email);
+        switch (role) {
+            case "buyer":
+                newUser = new Buyer(username, BCrypt.hashpw(password, BCrypt.gensalt()), email);
                 break;
-            case "SELLER":
-                newUser = new Seller(username, password, email);
+            case "seller":
+                newUser = new Seller(username, BCrypt.hashpw(password, BCrypt.gensalt()), email);
                 break;
-            case "ADMIN":
-                newUser = new Admin(username, password, email);
+            case "admin":
+                newUser = new Admin(username, BCrypt.hashpw(password, BCrypt.gensalt()), email);
                 break;
             default:
-                throw new Exception("Invalid role");
+                throw new RuntimeException("Invalid role");
         }
 
-        // Save user to the database
-        userDAO.createUser(newUser); // Ensure this method is implemented in UserDAO
+        userDAO.createUser(newUser);
     }
 
-    // Login method (using UserDAO to check the database)
+
+
     public User login(String username, String password) {
-        User user = userDAO.findByUsername(username); // Fetch the user from the database
+        User user = userDAO.findByUsername(username);
         if (user == null) {
             throw new RuntimeException("User not found");
         }
@@ -54,14 +54,30 @@ public class UserService {
             throw new RuntimeException("Invalid password");
         }
 
-        // Set up the current logged-in user
+        // Normalize user role to lowercase for consistent comparison
+        String role = user.getRole().toLowerCase();
+
+        // Check the role and handle accordingly
+        switch (role) {
+            case "buyer":
+                // Buyer-specific logic
+                break;
+            case "seller":
+                // Seller-specific logic
+                break;
+            case "admin":
+                // Admin-specific logic
+                break;
+            default:
+                throw new RuntimeException("Unknown role: " + role);
+        }
+
+        // Set the current logged-in user
         this.currentUser = user;
         return user;
     }
 
-    // Get the current logged-in user
     public User getCurrentUser() {
         return this.currentUser;
     }
-
-
+}

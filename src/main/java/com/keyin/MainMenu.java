@@ -10,7 +10,7 @@ import com.keyin.model.Product;
 import java.util.List;
 import java.util.Scanner;
 
-// handles all the logic
+// Handles all the logic
 public class MainMenu {
     private final UserService userService;
     private final ProductService productService;
@@ -22,7 +22,7 @@ public class MainMenu {
         this.scanner = new Scanner(System.in);
     }
 
-    // display the main menu
+    // Display the main menu
     public void show() {
         boolean running = true;
         while (running) {
@@ -93,17 +93,16 @@ public class MainMenu {
     }
 
     // Display menu based on user role
-    // logic  to show the user menu
     private void getRoleMenu(User user) {
         switch (user.getRole().toUpperCase()) {
             case "BUYER":
-                DisplayBuyerMenu();
+                displayBuyerMenu();
                 break;
             case "SELLER":
-                DisplaySellerMenu((Seller) user); // Passing the seller object for the seller menu
+                displaySellerMenu((Seller) user); // Passing the seller object for the seller menu
                 break;
             case "ADMIN":
-                DisplayAdminMenu();
+                displayAdminMenu();
                 break;
             default:
                 System.out.println("The role option failed to load");
@@ -111,7 +110,7 @@ public class MainMenu {
     }
 
     // Buyer menu
-    private void DisplayBuyerMenu() {
+    private void displayBuyerMenu() {
         boolean running = true;
         while (running) {
             System.out.println("Greetings, Buyer!");
@@ -121,7 +120,7 @@ public class MainMenu {
             System.out.println("3. View Product Info");
             System.out.println("4. Logout");
 
-            int option = scanner.nextInt(); // buyer needs to pick an option
+            int option = scanner.nextInt(); // Buyer needs to pick an option
             scanner.nextLine();
 
             switch (option) {
@@ -178,7 +177,7 @@ public class MainMenu {
     }
 
     // Seller Menu
-    private void DisplaySellerMenu(Seller seller) {
+    private void displaySellerMenu(Seller seller) {
         boolean running = true;
         while (running) {
             System.out.println("Greetings, Seller!");
@@ -207,13 +206,12 @@ public class MainMenu {
                     System.out.println("Enter product description:");
                     String description = scanner.nextLine();
 
-                    // DOUBLE CHECK
                     // Need to call addProduct from ProductService
                     productService.addProduct(name, price, quantity, description, seller);
                     System.out.println("Product added successfully!");
                     break;
 
-                case 2: //  Seller can update Product info
+                case 2: // Seller can update Product info
                     System.out.println("Enter the Product ID to update:");
                     int updateProductID = scanner.nextInt();
                     scanner.nextLine();
@@ -250,14 +248,14 @@ public class MainMenu {
                     running = false;
                     break;
 
-                default: // If option is wrong or doesnt exist
+                default: // If option is wrong or doesn't exist
                     System.out.println("Invalid choice. Please try again.");
             }
         }
     }
 
     // Admin menu
-    private void DisplayAdminMenu() {
+    private void displayAdminMenu() {
         boolean running = true;
         while (running) {
             System.out.println("Greetings, Admin!");
@@ -270,19 +268,17 @@ public class MainMenu {
             int option = scanner.nextInt();
             scanner.nextLine();
 
-            Admin admin = (Admin) userService.getCurrentUser(); // take the user that is currently login on
+            Admin admin = (Admin) userService.getCurrentUser(); // Take the user that is currently logged in
 
             switch (option) {
                 case 1:
-                    //DOUBLE CHECK THAT
-                    // display all users - contact info
                     // Admin can view all users
                     System.out.println("Displaying all users...");
                     admin.viewAllUsers();
                     break;
 
                 case 2:
-                    // Admin can delete a register user
+                    // Admin can delete a registered user
                     System.out.println("Enter the user ID to delete:");
                     int userIdToDelete = scanner.nextInt();
                     scanner.nextLine(); // Consume newline
@@ -290,10 +286,7 @@ public class MainMenu {
                     break;
 
                 case 3:
-                    // DOUBLE CHECK
                     // Admin can view all products
-                    // see list of products in the system
-                    // list need to include seller name and info
                     System.out.println("Displaying all products...");
                     admin.viewAllProducts();
                     break;
@@ -305,7 +298,7 @@ public class MainMenu {
                     break;
 
                 default:
-                    // If option is wrong or doesnt exist
+                    // If option is wrong or doesn't exist
                     System.out.println("Invalid choice. Please try again.");
             }
         }

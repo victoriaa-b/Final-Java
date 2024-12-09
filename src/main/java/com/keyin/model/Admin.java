@@ -62,21 +62,13 @@ public class Admin extends User {
 
     // View all products with seller info
     public void viewAllProducts() {
-        System.out.println("List of all products:");
-        List<Product> products = productService.getAllProducts();
+        System.out.println("Display list of all products:");
+        List<Product> products = productService.getAllProducts();  // Fetch products from the database
         if (products.isEmpty()) {
             System.out.println("No products available.");
         } else {
             for (Product product : products) {
-                // Displaying product details along with the seller's information
-                Seller seller = product.getSeller();
-                System.out.println("Product: " + product.getName() +
-                        "\nProduct ID: " + product.getProductID() +
-                        "\nPrice: $" + product.getPrice() +
-                        "\nQuantity: " + product.getQuantity() +
-                        "\nSeller: " + seller.getUsername() +
-                        "\nSeller ID: " + seller.getSellerID() +
-                        "\nSeller Email: " + seller.getEmail() + "\n");
+                System.out.println(product);
             }
         }
     }

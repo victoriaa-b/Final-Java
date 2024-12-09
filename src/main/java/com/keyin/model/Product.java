@@ -5,37 +5,38 @@ public class Product {
     private String name;
     private double price;
     private int quantity;
-    private int sellerID;
+    private int sellerId;  // Changed to follow camelCase convention
     private String description;
-    private Seller seller;
+    private Seller seller;  // Optional field, might not always be used
 
-    // Constructor
-    public Product(int productID, String name, double price, int quantity, int sellerID, String description, Seller seller) {
-        this.productID = productID;
-        this.name = name;
-        this.price = price;
-        this.quantity = quantity;
-        this.sellerID = sellerID;
-        this.description = description;
-        this.seller = seller;
-    }
-
-    // Constructor without seller object
-    public Product(String name, String description, double price, int quantity) {
+    // Constructor for a new product (without seller)
+    public Product(String name, String description, double price, int quantity, int sellerId) {
         this.productID = 0;  // Default to 0 for new product, to be set by the database
         this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
-        this.sellerID = 0;  // Seller will be set later
+        this.sellerId = sellerId;
     }
 
-    public Product(int productID, String name, double price, int quantity, int sellerID, String description) {
+    // Constructor for an existing product (with seller)
+    public Product(int productID, String name, double price, int quantity, int sellerId, String description, Seller seller) {
         this.productID = productID;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
-        this.sellerID = sellerID;
+        this.sellerId = sellerId;
+        this.description = description;
+        this.seller = seller;
+    }
+
+    // Constructor for an existing product (without seller)
+    public Product(int productID, String name, double price, int quantity, int sellerId, String description) {
+        this.productID = productID;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.sellerId = sellerId;
         this.description = description;
     }
 
@@ -74,12 +75,12 @@ public class Product {
         this.quantity = quantity;
     }
 
-    public int getSellerID() {
-        return sellerID;
+    public int getSellerId() {
+        return sellerId;
     }
 
-    public void setSellerID(int sellerID) {
-        this.sellerID = sellerID;
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
     }
 
     public String getDescription() {
@@ -101,13 +102,9 @@ public class Product {
     @Override
     public String toString() {
         String sellerInfo = (seller != null)
-                ? "Seller: " + seller.getUsername() + " (ID: " + seller.getSellerID() + "), Seller Email: " + seller.getEmail()
-                : "Seller ID: " + sellerID;
-        return "Product ID: " + productID +
-                ", Name: " + name +
-                ", Price: $" + String.format("%.2f", price) +  // Format price to 2 decimal places
-                ", Quantity: " + quantity +
-                ", Description: " + description +
-                ", " + sellerInfo;
+                ? "Seller: " + seller.getUsername() + " (ID: " + seller.getSellerId() + "), Seller Email: " + seller.getEmail()
+                : "Seller ID: " + sellerId;  // Handling when seller is null
+        return String.format("Product ID: %d, Name: %s, Price: $%.2f, Quantity: %d, Description: %s, %s",
+                productID, name, price, quantity, description, sellerInfo);
     }
 }
