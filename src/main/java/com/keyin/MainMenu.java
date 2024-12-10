@@ -6,8 +6,7 @@ import com.keyin.model.User;
 import com.keyin.model.Buyer;
 import com.keyin.model.Seller;
 import com.keyin.model.Admin;
-import com.keyin.model.Product;
-import java.util.List;
+
 import java.util.Scanner;
 
 // Handles all the logic
@@ -96,76 +95,66 @@ public class MainMenu {
     private void getRoleMenu(User user) {
         switch (user.getRole().toUpperCase()) {
             case "BUYER":
-                displayBuyerMenu();
+                Buyer buyer = new Buyer(user.getAccountID(), user.getUsername(), user.getPassword(), user.getEmail());
+                displayBuyerMenu(buyer);
                 break;
+
             case "SELLER":
-                displaySellerMenu((Seller) user); // Passing the seller object for the seller menu
+                Seller seller = new Seller(user.getAccountID(), user.getUsername(), user.getPassword(), user.getEmail(), user.getRole());
+                displaySellerMenu(seller);
                 break;
+
             case "ADMIN":
-                displayAdminMenu();
+                Admin admin = new Admin(user.getAccountID(), user.getUsername(), user.getPassword(), user.getEmail());
+                displayAdminMenu(admin);
                 break;
+
             default:
-                System.out.println("The role option failed to load");
+                System.out.println("Role not recognized. Please contact support.");
+                break;
         }
     }
 
-    // Buyer menu
-    private void displayBuyerMenu() {
+
+    private void displayBuyerMenu(Buyer buyer) {
         boolean running = true;
         while (running) {
-            System.out.println("Greetings, Buyer!");
-            System.out.println("Buyer Menu Selection:");
+            System.out.println("\n=== Buyer Menu ===");
+            System.out.println("Greetings, " + buyer.getUsername() + "!");
+            System.out.println("====================");
             System.out.println("1. View All Products");
             System.out.println("2. Search for a Product");
             System.out.println("3. View Product Info");
             System.out.println("4. Logout");
+            System.out.println("====================");
+            System.out.print("Enter your choice: ");
 
-            int option = scanner.nextInt(); // Buyer needs to pick an option
-            scanner.nextLine();
+            int option = scanner.nextInt();
+            scanner.nextLine(); // Clear the newline
 
             switch (option) {
                 case 1:
-                    // Buyer can view all products
-                    System.out.println("Displaying all available products...");
-                    List<Product> products = productService.getAllProducts();
-                    if (products != null && !products.isEmpty()) {
-                        for (Product product : products) {
-                            System.out.println("Product Name: " + product.getName());
-                            System.out.println("Product ID: " + product.getProductID());
-                        }
-                    } else {
-                        System.out.println("No products available.");
-                    }
+                    // Buyer browses all products
+                    buyer.browseProducts();
                     break;
 
                 case 2:
-                    // Buyer can search for a product by its ID
-                    System.out.println("Enter the product ID to search:");
-                    String searchId = scanner.nextLine();
-                    Product searchedProduct = productService.getProductDetails(Integer.parseInt(searchId));
-                    if (searchedProduct != null) {
-                        System.out.println("Product Found: " + searchedProduct.getName());
-                    } else {
-                        System.out.println("Product could not be found.");
-                    }
+                    // Buyer searches for a product by name
+                    System.out.println("Enter the product name to search:");
+                    String productName = scanner.nextLine();
+                    buyer.searchProduct(productName);
                     break;
 
                 case 3:
-                    // Buyer can view product details by using the ID
+                    // Buyer views product details by ID
                     System.out.println("Enter the product ID to view details:");
-                    String infoId = scanner.nextLine();
-                    Product productDetails = productService.getProductDetails(Integer.parseInt(infoId));
-                    if (productDetails != null) {
-                        System.out.println("Product Name: " + productDetails.getName());
-                        System.out.println("Price: $" + productDetails.getPrice());
-                        System.out.println("Description: " + productDetails.getDescription());
-                    } else {
-                        System.out.println("Product could not be found.");
-                    }
+                    int productId = scanner.nextInt();
+                    scanner.nextLine(); // Clear the newline
+                    buyer.viewProductDetails(productId);
                     break;
 
                 case 4:
-                    // Buyer has the option to log out
+                    // Buyer logs out
                     System.out.println("Logging out...");
                     running = false;
                     break;
@@ -175,131 +164,137 @@ public class MainMenu {
             }
         }
     }
+
+
 
     // Seller Menu
     private void displaySellerMenu(Seller seller) {
         boolean running = true;
         while (running) {
-            System.out.println("Greetings, Seller!");
-            System.out.println("Seller Menu Selection:");
+            System.out.println("\n=== Seller Menu ===");
+            System.out.println("Greetings, " + seller.getUsername() + "!");
+            System.out.println("====================");
             System.out.println("1. Add Product");
             System.out.println("2. Update Product");
             System.out.println("3. Delete Product");
             System.out.println("4. View My Products");
             System.out.println("5. Logout");
+            System.out.println("====================");
+            System.out.print("Enter your choice: ");
 
             int option = scanner.nextInt();
             scanner.nextLine();
 
             switch (option) {
-                case 1: // Seller can add Product - Take info for the product
-                    System.out.println("Enter product name:");
+                case 1:
+                    System.out.println("\nEnter product name:");
                     String name = scanner.nextLine();
-
                     System.out.println("Enter product price:");
                     double price = scanner.nextDouble();
+                    scanner.nextLine();  // Consume the newline character
 
                     System.out.println("Enter product quantity:");
                     int quantity = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();  // Consume the newline character
 
                     System.out.println("Enter product description:");
                     String description = scanner.nextLine();
 
-                    // Need to call addProduct from ProductService
-                    productService.addProduct(name, price, quantity, description, seller);
-                    System.out.println("Product added successfully!");
-                    break;
-
-                case 2: // Seller can update Product info
-                    System.out.println("Enter the Product ID to update:");
-                    int updateProductID = scanner.nextInt();
-                    scanner.nextLine();
-
-                    System.out.println("Enter new product name (or press Enter to keep unchanged):");
-                    String newName = scanner.nextLine();
-                    System.out.println("Enter new product price (or -1 to keep unchanged):");
-                    double newPrice = scanner.nextDouble();
-                    System.out.println("Enter new product quantity (or -1 to keep unchanged):");
-                    int newQuantity = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    seller.updateProduct(updateProductID,
-                            newName.isEmpty() ? null : newName,
-                            newPrice < 0 ? null : newPrice,
-                            newQuantity < 0 ? null : newQuantity);
-                    System.out.println("Product updated successfully!");
-                    break;
-
-                case 3: // Seller can delete a Product
-                    System.out.println("Enter the Product ID to delete:");
-                    int deleteProductID = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    seller.deleteProduct(deleteProductID);
-                    System.out.println("Product deleted successfully!");
-                    break;
-
-                case 4: // Seller can view their Products
-                    System.out.println("Displaying your products...");
-                    seller.viewMyProducts();
-                    break;
-
-                case 5: // Seller can logout
-                    System.out.println("Logging out...");
-                    running = false;
-                    break;
-
-                default: // If option is wrong or doesn't exist
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        }
-    }
-
-    // Admin menu
-    private void displayAdminMenu() {
-        boolean running = true;
-        while (running) {
-            System.out.println("Greetings, Admin!");
-            System.out.println("Admin Menu Selection:");
-            System.out.println("1. View All Users");
-            System.out.println("2. Delete a User");
-            System.out.println("3. View All Products");
-            System.out.println("4. Logout");
-
-            int option = scanner.nextInt();
-            scanner.nextLine();
-
-            Admin admin = (Admin) userService.getCurrentUser(); // Take the user that is currently logged in
-
-            switch (option) {
-                case 1:
-                    // Admin can view all users
-                    System.out.println("Displaying all users...");
-                    admin.viewAllUsers();
+                    seller.addProduct(name, price, quantity, description);
                     break;
 
                 case 2:
-                    // Admin can delete a registered user
-                    System.out.println("Enter the user ID to delete:");
-                    int userIdToDelete = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
-                    admin.deleteUser(userIdToDelete);
+                    System.out.println("\nEnter the product ID to update:");
+                    int productId = scanner.nextInt();
+                    scanner.nextLine();  // Consume newline
+
+                    System.out.println("Enter the new product name (leave blank to keep unchanged):");
+                    String newName = scanner.nextLine();
+                    newName = newName.isEmpty() ? null : newName;
+
+                    System.out.println("Enter the new price (leave blank to keep unchanged):");
+                    String newPriceInput = scanner.nextLine();
+                    Double newPrice = newPriceInput.isEmpty() ? null : Double.parseDouble(newPriceInput);
+
+                    System.out.println("Enter the new quantity (leave blank to keep unchanged):");
+                    String newQuantityInput = scanner.nextLine();
+                    Integer newQuantity = newQuantityInput.isEmpty() ? null : Integer.parseInt(newQuantityInput);
+
+                    System.out.println("Enter the new description (leave blank to keep unchanged):");
+                    String newDescription = scanner.nextLine();
+                    newDescription = newDescription.isEmpty() ? null : newDescription;
+
+                    seller.updateProduct(productId, newName, newPrice, newQuantity, newDescription);
                     break;
 
                 case 3:
-                    // Admin can view all products
-                    System.out.println("Displaying all products...");
-                    admin.viewAllProducts();
+                    System.out.println("\nEnter the product ID to delete:");
+                    int productIdToDelete = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+
+                    seller.deleteProduct(productIdToDelete);
                     break;
 
                 case 4:
-                    // Admin can logout
-                    System.out.println("Logging out...");
+                    System.out.println("\nDisplaying all your products...");
+                    seller.viewAllProducts();
+                    break;
+
+                case 5:
+                    System.out.println("\nLogging out...");
                     running = false;
                     break;
 
                 default:
-                    // If option is wrong or doesn't exist
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("\nInvalid choice. Please try again.");
+            }
+        }
+    }
+
+
+    // Admin menu
+    private void displayAdminMenu(Admin admin) {
+        boolean running = true;
+        while (running) {
+            System.out.println("\n=== Admin Menu ===");
+            System.out.println("Greetings, Admin!");
+            System.out.println("====================");
+            System.out.println("1. View All Users");
+            System.out.println("2. Delete a User");
+            System.out.println("3. View All Products");
+            System.out.println("4. Logout");
+            System.out.println("====================");
+            System.out.print("Enter your choice: ");
+
+            int option = scanner.nextInt();
+            scanner.nextLine();
+
+            admin = (Admin) userService.getCurrentUser();
+
+            switch (option) {
+                case 1:
+                    System.out.println("\nDisplaying all users...");
+                    admin.viewAllUsers();
+                    break;
+
+                case 2:
+                    System.out.print("\nEnter the ID of the user to delete: ");
+                    int userId = scanner.nextInt();
+                    admin.deleteUser(userId);  // Calls Admin's method to delete a user
+                    break;
+
+                case 3:
+                    System.out.println("\nDisplaying all products...");
+                    admin.viewAllProducts();
+                    break;
+
+                case 4:
+                    System.out.println("\nLogging out...");
+                    running = false;
+                    break;
+
+                default:
+                    System.out.println("\nInvalid choice. Please try again.");
             }
         }
     }

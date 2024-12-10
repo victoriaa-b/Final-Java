@@ -9,42 +9,105 @@ import java.util.List;
 
 public class ProductDAO {
 
-    // Add product to database
-    public boolean addProduct(Product product) {
-        // First, check if the seller is a valid seller
-        String checkRoleQuery = "SELECT user_role FROM Users WHERE id = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement checkRoleStatement = connection.prepareStatement(checkRoleQuery)) {
-            checkRoleStatement.setInt(1, product.getSellerId());
-            ResultSet roleResult = checkRoleStatement.executeQuery();
+    // Insert product to database
+    public void insertProduct(String name, double price, int quantity, String description, int sellerId) {
+        String query = "INSERT INTO Products (product_name, price, quantity, product_description, seller_id) VALUES (?, ?, ?, ?, ?)";
 
-            if (roleResult.next()) {
-                String role = roleResult.getString("user_role");
-                if ("SELLER".equalsIgnoreCase(role)) {
-                    // Proceed with adding the product if the user is a seller
-                    String query = "INSERT INTO Products (product_name, product_description, price, quantity, seller_id) VALUES (?, ?, ?, ?, ?)";
-                    try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                        preparedStatement.setString(1, product.getName());
-                        preparedStatement.setString(2, product.getDescription());
-                        preparedStatement.setDouble(3, product.getPrice());
-                        preparedStatement.setInt(4, product.getQuantity());
-                        preparedStatement.setInt(5, product.getSellerId());
-                        int rowsInserted = preparedStatement.executeUpdate();
-                        if (rowsInserted > 0) {
-                            System.out.println("Product added successfully!");
-                            return true; // Indicate success
-                        }
-                    }
-                } else {
-                    System.out.println("The user is not a seller.");
-                }
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setDouble(2, price);
+            preparedStatement.setInt(3, quantity);
+            preparedStatement.setString(4, description);
+            preparedStatement.setInt(5, sellerId);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("Product added successfully.");
             } else {
-                System.out.println("Seller not found.");
+                System.out.println("Failed to add product.");
             }
         } catch (SQLException e) {
-            System.err.println("Error adding product: " + e.getMessage());
+            System.err.println("Error while adding product: " + e.getMessage());
         }
-        return false; // Indicate failure if product was not added
+    }
+
+    // Update product in database
+    public void updateProduct(int productId, int sellerId, String newName, Double newPrice, Integer newQuantity, String newDescription) {
+        String query = "UPDATE Products SET product_name = COALESCE(?, product_name), price = COALESCE(?, price), " +
+                "quantity = COALESCE(?, quantity), product_description = COALESCE(?, product_description) " +
+                "WHERE id = ? AND seller_id = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setString(1, newName);
+            preparedStatement.setObject(2, newPrice); // Allow null values for optional updates
+            preparedStatement.setObject(3, newQuantity);
+            preparedStatement.setString(4, newDescription);
+            preparedStatement.setInt(5, productId);
+            preparedStatement.setInt(6, sellerId);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Product updated successfully.");
+            } else {
+                System.out.println("Failed to update product. Ensure the product ID is correct and belongs to you.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error while updating product: " + e.getMessage());
+        }
+    }
+
+    // Delete product by ID
+    public void deleteProduct(int productId, int sellerId) {
+        String query = "DELETE FROM Products WHERE id = ? AND seller_id = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, productId);
+            preparedStatement.setInt(2, sellerId);
+
+            int rowsDeleted = preparedStatement.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Product deleted successfully.");
+            } else {
+                System.out.println("Failed to delete product. Ensure the product ID is correct and belongs to you.");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error while deleting product: " + e.getMessage());
+        }
+    }
+
+    // Get products by seller ID
+    public List<Product> getProductsBySeller(int sellerId) {
+        List<Product> products = new ArrayList<>();
+        String query = "SELECT * FROM Products WHERE seller_id = ?";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, sellerId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Product product = new Product(
+                            resultSet.getInt("id"),
+                            resultSet.getString("product_name"),
+                            resultSet.getDouble("price"),
+                            resultSet.getInt("quantity"),
+                            resultSet.getInt("seller_id"),
+                            resultSet.getString("product_description")
+                    );
+                    products.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching seller's products: " + e.getMessage());
+        }
+
+        return products;
     }
 
     // Get all products
@@ -123,74 +186,5 @@ public class ProductDAO {
             System.err.println("Error fetching product details: " + e.getMessage());
         }
         return product;
-    }
-
-    // Get products by seller ID
-    public List<Product> getProductsBySeller(int sellerId) {
-        List<Product> products = new ArrayList<>();
-        String query = "SELECT * FROM Products WHERE seller_id = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, sellerId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    Product product = new Product(
-                            resultSet.getInt("id"),
-                            resultSet.getString("product_name"),
-                            resultSet.getDouble("price"),
-                            resultSet.getInt("quantity"),
-                            resultSet.getInt("seller_id"),
-                            resultSet.getString("product_description"),
-                            null // Seller info can be set if needed later
-                    );
-                    products.add(product);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error fetching seller's products: " + e.getMessage());
-        }
-        return products;
-    }
-
-    // Update product in database
-    public boolean updateProduct(Product product) {
-        String query = "UPDATE Products SET product_name = ?, product_description = ?, price = ?, quantity = ? WHERE id = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, product.getName());
-            preparedStatement.setString(2, product.getDescription());
-            preparedStatement.setDouble(3, product.getPrice());
-            preparedStatement.setInt(4, product.getQuantity());
-            preparedStatement.setInt(5, product.getProductID());
-            int rowsUpdated = preparedStatement.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("Product updated successfully!");
-                return true; // Indicate success
-            } else {
-                System.out.println("Product update failed. No such product found.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error updating product: " + e.getMessage());
-        }
-        return false; // Indicate failure if product update failed
-    }
-
-    // Delete product by ID
-    public boolean deleteProduct(int productID) {
-        String query = "DELETE FROM Products WHERE id = ?";
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setInt(1, productID);
-            int rowsDeleted = preparedStatement.executeUpdate();
-            if (rowsDeleted > 0) {
-                System.out.println("Product deleted successfully!");
-                return true; // Indicate success
-            } else {
-                System.out.println("Product deletion failed. No such product found.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error deleting product: " + e.getMessage());
-        }
-        return false; // Indicate failure if product deletion failed
     }
 }

@@ -15,26 +15,23 @@ public class ProductService {
     }
 
     // Add a new product
-    public void addProduct(String name, double price, int quantity, String description, Seller seller) {
-        Product product = new Product(0, name, price, quantity, seller.getSellerId(), description, seller);
-        if (productDAO.addProduct(product)) {
-            System.out.println("Product added successfully!");
-        }
+    public void addProduct(String name, double price, int quantity, String description, int sellerId) {
+        productDAO.insertProduct(name, price, quantity, description, sellerId);
     }
 
     // Update an existing product
-    public void updateProduct(int productID, String name, double price, int quantity) {
-        Product product = new Product(productID, name, price, quantity, 0, "", null);
-        if (productDAO.updateProduct(product)) {
-            System.out.println("Product updated successfully!");
-        }
+    public void updateProduct(int productId, int sellerId, String newName, Double newPrice, Integer newQuantity, String newDescription) {
+        productDAO.updateProduct(productId, sellerId, newName, newPrice, newQuantity, newDescription);
     }
 
     // Delete a product
-    public void deleteProduct(int productID) {
-        if (productDAO.deleteProduct(productID)) {
-            System.out.println("Product deleted successfully!");
-        }
+    public void deleteProduct(int productId, int sellerId) {
+        productDAO.deleteProduct(productId, sellerId);
+    }
+
+    // Get products by seller ID
+    public List<Product> getProductsBySeller(int sellerId) {
+        return productDAO.getProductsBySeller(sellerId);
     }
 
     // Get all products
@@ -50,10 +47,5 @@ public class ProductService {
     // Get product details by ID
     public Product getProductDetails(int productID) {
         return productDAO.getProductDetails(productID);
-    }
-
-    // Get products by seller ID
-    public List<Product> getProductsBySeller(int sellerID) {
-        return productDAO.getProductsBySeller(sellerID);
     }
 }

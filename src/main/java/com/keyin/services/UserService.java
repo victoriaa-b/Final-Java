@@ -7,6 +7,8 @@ import com.keyin.model.Admin;
 import com.keyin.DAO.UserDAO;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.List;
+
 public class UserService {
     private final UserDAO userDAO;
     private User currentUser;
@@ -79,5 +81,19 @@ public class UserService {
 
     public User getCurrentUser() {
         return this.currentUser;
+    }
+
+    public List<User> getAllUsers() {
+        return userDAO.getAllUsers();
+    }
+
+    // Delete user by ID
+    public void deleteUser(int userId) {
+        userDAO.deleteUserById(userId);  // Calls DAO to delete user by ID
+    }
+
+    // Get a user by ID
+    public User getUserById(int userId) {
+        return userDAO.getUserById(userId);  // Calls DAO to fetch user by ID
     }
 }

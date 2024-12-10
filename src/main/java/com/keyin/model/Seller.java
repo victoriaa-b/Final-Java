@@ -7,8 +7,8 @@ import com.keyin.model.Product;
 import java.util.List;
 
 public class Seller extends User {
-    private final int seller_id; // Updated variable name
-    private final ProductService productService;
+    private int seller_id; // Updated variable name
+    private ProductService productService;
     private ProductDAO productDAO;
 
     // Constructor for existing seller with accountID
@@ -29,34 +29,36 @@ public class Seller extends User {
         this.productService = new ProductService();
     }
 
-    public int getSellerId() { // Updated method name
+    public Seller(int id, String username, String userPassword, String email) {
+        // Call the parent constructor (User) to initialize common fields
+        super(id, username, userPassword, email, "seller");
+    }
+
+
+    public int getSellerId() {
         return seller_id;
     }
 
-    // Add a new product
     public void addProduct(String name, double price, int quantity, String description) {
-        productService.addProduct(name, price, quantity, description, this); // Save to the database
+        productService.addProduct(name, price, quantity, description, seller_id);
     }
 
-    // Update an existing product
-    public void updateProduct(int productID, String name, double price, int quantity) {
-        productService.updateProduct(productID, name, price, quantity); // Update the database
+    public void updateProduct(int productId, String newName, Double newPrice, Integer newQuantity, String newDescription) {
+        productService.updateProduct(productId, seller_id, newName, newPrice, newQuantity, newDescription);
     }
 
-    // Delete a product
-    public void deleteProduct(int productID) {
-        productService.deleteProduct(productID); // Delete from the database
+    public void deleteProduct(int productId) {
+        productService.deleteProduct(productId, seller_id);
     }
 
-    // View all products listed by this seller
-    public void viewMyProducts() {
-        List<Product> sellerProducts = productService.getProductsBySeller(this.seller_id); // Fetch from the database
-        if (sellerProducts.isEmpty()) {
+    public void viewAllProducts() {
+        List<Product> products = productService.getProductsBySeller(seller_id);
+        if (products.isEmpty()) {
             System.out.println("You have no products listed.");
         } else {
             System.out.println("Your Products:");
-            for (Product product : sellerProducts) {
-                System.out.println(product); // Prints the product using toString method
+            for (Product product : products) {
+                System.out.println(product); // Ensure `Product` class has a `toString` method for better display
             }
         }
     }
